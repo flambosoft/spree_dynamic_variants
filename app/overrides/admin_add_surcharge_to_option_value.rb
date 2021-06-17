@@ -12,3 +12,12 @@ Deface::Override.new(
     '<td class="surcharge">
        <%= f.text_field :surcharge, :value => number_to_currency(f.object.surcharge, :unit => ""), :class => "form-control" %>
      </td>')
+
+Deface::Override.new(
+  name: 'admin_option_value_surcharge_thumb',
+  virtual_path: 'spree/admin/option_types/_option_value_fields',
+  insert_before: '[data-hook="option_value"] td:last-child',
+  text:
+    '<td class="surcharge-thumb">
+       <%= f.file_field :thumb, :class => "form-control" %>
+     </td>')

@@ -1,4 +1,5 @@
-Spree::Variant.class_eval do
+module Spree
+  module VariantDecorator
 
   def add_options_and_calc_price(new_option_values)
     self.price = product.price
@@ -15,3 +16,6 @@ Spree::Variant.class_eval do
   end
 
 end
+end
+
+::Spree::Variant.prepend(Spree::VariantDecorator)

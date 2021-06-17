@@ -1,35 +1,124 @@
 <%= form_for :order, :url => variant_populate_orders_path do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_dynamic_variant_product_cart_form">
 
-    <table>
-      <tbody>
-      <% @product.option_types.each do |ot| %>
-        <tr>
-          <td><%= ot.presentation  %></td>
-          <td><%= select("options", ot.id, ot.option_values.collect {|ov| [ ov.presentation, ov.id ] }) %></td>
-        </tr>
+
+
+<hr>
+      <ul id="product-variants-all" class="product-variants">
+      <% @product.option_types.each_with_index do |option_type, index| %>
+          <li>
+              <%#= render "option_type", option_type: option_type, index: index %>
+
+<!-- start -->
+
+<div class="product-variants-variant-all" data-option-type-id="<%= option_type.id %>">
+  <span class="d-block mb-2 text-center text-md-left text-uppercase product-variants-variant-title">
+    <%= option_type.presentation %>
+  </span>
+
+  <div class="d-flex flex-wrap justify-content-center justify-content-md-start">
+    <ol class="d-flex flex-wrap product-variants-variant-values">
+      <li>
+        <%= radio_button_tag "options[1]",
+                             0,
+                             false,
+                             class: "product-variants-variant-values-radio",
+                             data: {
+                               "option-type-index" => index,
+                               "presentation" => @product.name,
+                               "variant-id" => 0,
+                               "src" => main_app.url_for(@product.images.last.attachment)
+                             } %>
+
+        <%= label_tag "options_1_0",
+                      class: "m-1 select-label",
+                      "aria-label" => @product.name do %>
+
+          <span>
+            <div
+              class="product-thumbnails-carousel-item-single product-thumbnails-carousel-item-single--visible"
+              data-variant-is-master="true"
+              data-variant-id="0">
+      <%= lazy_image(
+            src: main_app.url_for(@product.images.last.url(:mini)),
+            class: 'd-block w-80',
+            alt: @product.name,
+            width: 50,
+            height: 50) %>
+    </div>
+          </span>
+        <% end %>
+      </li>
+      <% option_type.option_values.each do |option_value| %>
+        <li>
+          <%= radio_button_tag "options[1]",
+                               option_value.id,
+                               false,
+                               class: "product-variants-variant-values-radio",
+                               data: {
+                                 "option-type-index" => index,
+                                 "presentation" => option_value.presentation,
+                                 "variant-id" => option_value.id,
+                                 "src" => main_app.url_for(option_value.thumb.attachment),
+                                 "price" => option_value.surcharge
+                                #  "variant-id" => option_value.variant_id
+                               } %>
+
+          <%= label_tag "options_#{option_type.id}_#{option_value.id}",
+                        class: "m-1 select-label",
+                        "aria-label" => option_value.presentation do %>
+
+            <span>
+              <% if option_value.thumb.attached? %>
+<img src="<%= main_app.url_for(option_value.thumb.attachment) %>" class="d-block w-80" width="50px" height="50px" style="padding: 2px">
+                <% end %>
+              <%= option_value.presentation %>
+            </span>
+
+          <% end %>
+        </li>
       <% end %>
-    </table>
+    </ol>
+  </div>
+</div>
+
+
+<!-- end -->
+
+
+
+
+          </li>
+        <% end %>
+      </ul>
+
     <%= hidden_field_tag "product_id", @product.id %>
 
+<hr>
     <% if @product.price_in(current_currency) and !@product.price.nil? %>
       <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
 
-        <div id="product-price">
+        <div id="product-price" style="display: none;">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
-            <span class="price selling" itemprop="price">
+            <span class="price selling font-weight-bold" itemprop="price">
               <%= display_price(@product) %>
             </span>
             <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
           </div>
         </div>
 
-        <div class="add-to-cart">
-          <%= number_field_tag :quantity, 1, :class => 'title', :min => 1 %>
-          <%= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>
-            <%= Spree.t(:add_to_cart) %>
-          <% end %>
+        <div class="add-to-cart"  style="display: none;">
+        <div class="mb-5 mt-4 text-center text-md-left">
+          <%= render 'spree/shared/quantity_select', input_name: :quantity %>
+        </div>
+        <%= button_tag class: 'btn btn-primary w-100 text-uppercase font-weight-bold add-to-cart-button', id: 'add-to-cart-button', type: :submit do %>
+          <%= Spree.t(:add_to_cart) %>
+        <% end %>
+          <%#= number_field_tag :quantity, 1, :class => 'title', :min => 1 %>
+          <%#= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>
+            <%#= Spree.t(:add_to_cart) %>
+          <%# end %>
         </div>
       </div>
     <% else %>

@@ -1,4 +1,5 @@
-SpreeDynamicVariants
+SpreeDynamicVariants cloned from [@hefan](https://github.com/hefan/spree_dynamic_variants)
+
 ====================
 
 This Gems creates variants for a Spree Shop when needed.
@@ -21,7 +22,7 @@ Installation
 Add spree_dynamic_variants to your Gemfile:
 
 ```ruby
-gem 'spree_dynamic_variants', github: 'hefan/spree_dynamic_variants', branch: 'master'
+gem 'spree_dynamic_variants', github: 'flambosoft/spree_dynamic_variants', branch: 'master'
 ```
 
 Bundle your dependencies and run the installation generator:
